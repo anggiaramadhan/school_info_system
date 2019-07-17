@@ -1,2 +1,2 @@
-json.extract! classroom, :id, :name, :semester, :homeroom_id, :created_at, :updated_at
+json.extract! classroom, :id, :name, :semester, :homeroom_id
 json.url classroom_url(classroom, format: :json)

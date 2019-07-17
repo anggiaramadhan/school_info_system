@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_065800) do
+ActiveRecord::Schema.define(version: 2019_07_17_144020) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,18 @@ ActiveRecord::Schema.define(version: 2019_07_17_065800) do
     t.index ["teacher_id"], name: "index_classrooms_teachers_on_teacher_id"
   end
 
+  create_table "scores", force: :cascade do |t|
+    t.integer "value"
+    t.bigint "classroom_id"
+    t.bigint "student_id"
+    t.bigint "subject_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["classroom_id"], name: "index_scores_on_classroom_id"
+    t.index ["student_id"], name: "index_scores_on_student_id"
+    t.index ["subject_id"], name: "index_scores_on_subject_id"
+  end
+
   create_table "students", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -54,23 +66,26 @@ ActiveRecord::Schema.define(version: 2019_07_17_065800) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "teachers", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "teachers_subjects", force: :cascade do |t|
+  create_table "subjects_teachers", id: :bigint, default: -> { "nextval('teachers_subjects_id_seq'::regclass)" }, force: :cascade do |t|
     t.bigint "teacher_id"
     t.bigint "subject_id"
     t.index ["subject_id"], name: "index_teachers_subjects_on_subject_id"
     t.index ["teacher_id"], name: "index_teachers_subjects_on_teacher_id"
   end
 
+  create_table "teachers", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "classrooms_students", "classrooms"
   add_foreign_key "classrooms_students", "students"
   add_foreign_key "classrooms_teachers", "classrooms"
   add_foreign_key "classrooms_teachers", "teachers"
-  add_foreign_key "teachers_subjects", "subjects"
-  add_foreign_key "teachers_subjects", "teachers"
+  add_foreign_key "scores", "classrooms"
+  add_foreign_key "scores", "students"
+  add_foreign_key "scores", "subjects"
+  add_foreign_key "subjects_teachers", "subjects"
+  add_foreign_key "subjects_teachers", "teachers"
 end
